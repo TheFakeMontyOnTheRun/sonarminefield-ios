@@ -7,13 +7,24 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Board.h"
+
+enum InteractionMode { GAMEMODE_POKE, GAMEMODE_MOVEMAP, GAMEMODE_FLAG };
 
 @interface GameViewController : UIViewController {
     IBOutlet UIImageView *drawImage;
     Board *gameBoard;
+    UIImage *covered;
+    UIImage *flagged;
+    UIImage *tiles[ 11 ];
+    CGPoint cameraPosition;
+    CGPoint lastTouch;
+    int mode;
+    IBOutlet UISegmentedControl *modeSelector;
 }
 
 - (void) goOutcome;
+- (IBAction) gameModeChanged:(id)sender;
 - (IBAction)backToMenu:(id)sender;
 -(IBAction) getLine:(id) sender;
 @end

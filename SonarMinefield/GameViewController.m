@@ -22,14 +22,46 @@
     if (self) {
         
         gameBoard = [[ Board alloc ] init ];
+        
+        
+        tiles[ 0 ] =    [UIImage imageNamed:@"blanksvg.png"];
+        tiles[ 1 ] =    [UIImage imageNamed:@"n1svg.png"];
+        tiles[ 2 ] =    [UIImage imageNamed:@"n2svg.png"];
+        tiles[ 3 ] =    [UIImage imageNamed:@"n3svg.png"];
+        tiles[ 4 ] =    [UIImage imageNamed:@"n4svg.png"];
+        tiles[ 5 ] =    [UIImage imageNamed:@"n5svg.png"];
+        tiles[ 6 ] =    [UIImage imageNamed:@"n6svg.png"];
+        tiles[ 7 ] =    [UIImage imageNamed:@"n7svg.png"];
+        tiles[ 8 ] =    [UIImage imageNamed:@"n8svg.png"];
+        tiles[ 9 ] =    [UIImage imageNamed:@"minesvg.png"];
+        tiles[ 10 ] =    [UIImage imageNamed:@"minespokedsvg.png"];
+        
+        flagged =    [UIImage imageNamed:@"flagged.png"];
+        
+        covered =    [UIImage imageNamed:@"coveredsvg.png"];
+        
+        mode = GAMEMODE_POKE;
+        
+        
+        
+
     }
+    
+    
+    
     return self;
+}
+
+- (IBAction) gameModeChanged:(id)sender {
+    
+    mode = [ modeSelector selectedSegmentIndex ];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [ self draw ];
 }
 
 - (void)didReceiveMemoryWarning
@@ -38,59 +70,113 @@
     // Dispose of any resources that can be recreated.
 }
 
--(IBAction) getLine:(id) sender{
-    
-    CGPoint currentPoint;
-    CGPoint lastPoint;
-    currentPoint.x=45;
-    currentPoint.y=458;
-    lastPoint.x=445;
-    lastPoint.y=534;
-    UIGraphicsBeginImageContext( drawImage.frame.size);
-    [drawImage.image drawInRect:CGRectMake(0, 0, drawImage.frame.size.width, drawImage.frame.size.height)];
-    CGContextSetLineCap(UIGraphicsGetCurrentContext(), kCGLineCapRound);
-    CGContextSetLineWidth(UIGraphicsGetCurrentContext(), 5.0);
-    CGContextSetRGBStrokeColor(UIGraphicsGetCurrentContext(), 0.0, 0.5, 0.6, 1.0);
-    CGContextBeginPath(UIGraphicsGetCurrentContext());
-    CGContextMoveToPoint(UIGraphicsGetCurrentContext(), lastPoint.x, lastPoint.y);
-    CGContextAddLineToPoint(UIGraphicsGetCurrentContext(), currentPoint.x, currentPoint.y);
-    CGContextStrokePath(UIGraphicsGetCurrentContext());
-    
-    UIImage *blank =    [UIImage imageNamed:@"blanksvg.png"];
-    UIImage *mine =    [UIImage imageNamed:@"minesvg.png"];
-    UIImage *img;
-//    CGImageRef ref = img.CGImage;
-    CGRect rect = CGRectMake( 20, 20, 64, 64 );
-//    CGContextDrawImage( UIGraphicsGetCurrentContext(), rect, ref );
 
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+
+    UITouch *touch = [touches anyObject];
+    CGPoint touchInRect = [ touch locationInView: drawImage ];
+    int relativeX;
+    int relativeY;
+    
+    relativeX = ( touchInRect.x + cameraPosition.x ) / [ tiles[ 0 ] size ].width;
+    relativeY = ( touchInRect.y + cameraPosition.y ) / [ tiles[ 0 ] size ].height;
+    
+    
+    if ( CGRectContainsPoint( [ drawImage frame ], touchInRect ) ) {
+        
+        switch ( mode ) {
+            case GAMEMODE_POKE:
+                [ gameBoard pokeAtX: relativeX andY: relativeY ];
+                break;
+            case GAMEMODE_MOVEMAP:
+
+                cameraPosition.x += (lastTouch.x - touchInRect.x );
+                cameraPosition.y += (lastTouch.y - touchInRect.y );
+                break;
+        }
+        
+        lastTouch.x = touchInRect.x;
+        lastTouch.y = touchInRect.y;
+        [ self draw ];
+    }
+}
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    UITouch *touch = [touches anyObject];
+    
+    if ([touch view] == drawImage )
+    {
+        
+            
+        CGPoint touchLocation = [touch locationInView: drawImage ];
+        int relativeX;
+        int relativeY;
+        
+        relativeX = ( touchLocation.x + cameraPosition.x ) / [ tiles[ 0 ] size ].width;
+        relativeY = ( touchLocation.y + cameraPosition.y ) / [ tiles[ 0 ] size ].height;
+        
+        
+        switch ( mode ) {
+                
+            case GAMEMODE_POKE:
+                [ gameBoard pokeAtX: relativeX andY: relativeY ];
+                break;
+                
+            case GAMEMODE_FLAG:
+                
+                [ gameBoard flagAtX: relativeX andY: relativeY ];
+                break;
+		}       
+        
+        lastTouch.x = touchLocation.x;
+        lastTouch.y = touchLocation.y;
+        
+        [ self draw ];
+    }
+    
+}
+
+- ( void ) draw {
+    
+    UIGraphicsBeginImageContext( drawImage.frame.size);
+    
+    UIImage *img;
+    CGRect rect = CGRectMake( 20, 20, 64, 64 );
+    
     
     for ( int y = 0; y < BOARD_SIZE; ++y ) {
-
+        
         for ( int x = 0; x < BOARD_SIZE; ++x ) {
-
-            if ( [ gameBoard tileAtX: x andY: y ] == 1 )
-                img = mine;
-            else
-                img = blank;
             
-            rect.origin.y = ( y * img.size.height );
-            rect.origin.x = ( x * img.size.width  );
+            if ( [ gameBoard isCoveredAtX: x andY: y ] ) {
+
+                if ( [ gameBoard isFlaggedAtX: x andY: y ] )
+                    
+                    img = flagged;
+                else
+                    img = covered;
+                
+            } else
+                img = tiles[ [ gameBoard tileAtX: x andY: y ]  ];
+            
+            rect.origin.y = ( y * img.size.height ) - cameraPosition.y;
+            rect.origin.x = ( x * img.size.width  ) - cameraPosition.x;
             rect.size.width = img.size.width + 2;
             rect.size.height = img.size.width + 2;
             [img drawInRect: rect ];
         }
     }
-
+    
     
     drawImage.image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
+}
 
+-(IBAction) getLine:(id) sender{
+    
+    [ self draw ];
     [ self performSelector: @selector( goOutcome ) withObject: self afterDelay: 2 ];
-    
-    
-
-
-    
 }
 
 -(void) goOutcome {

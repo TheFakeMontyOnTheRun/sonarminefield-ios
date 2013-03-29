@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#define BOARD_SIZE 20
+
 
 enum GAME_SCREENS{ SCREEN_TITLE, SCREEN_GAME, SCREEN_OUTCOME };
 
@@ -21,6 +21,6 @@ enum GAME_SCREENS{ SCREEN_TITLE, SCREEN_GAME, SCREEN_OUTCOME };
 
 @property (strong, nonatomic) UIWindow *window;
 
-@property (strong, nonatomic) ViewController *viewController;
+@property (strong, nonatomic) UIViewController *viewController;
 
 @end
