@@ -11,8 +11,8 @@
 
 enum InteractionMode { GAMEMODE_POKE, GAMEMODE_MOVEMAP, GAMEMODE_FLAG };
 
-@interface GameViewController : UIViewController {
-    IBOutlet UIImageView *drawImage;
+@interface GameViewController : UIViewController<GameStateListener> {
+    IBOutlet UIImageView *playField;
     Board *gameBoard;
     UIImage *covered;
     UIImage *flagged;
@@ -27,4 +27,6 @@ enum InteractionMode { GAMEMODE_POKE, GAMEMODE_MOVEMAP, GAMEMODE_FLAG };
 - (IBAction) gameModeChanged:(id)sender;
 - (IBAction)backToMenu:(id)sender;
 -(IBAction) getLine:(id) sender;
+- ( void ) defeat;
+- ( void ) victory;
 @end

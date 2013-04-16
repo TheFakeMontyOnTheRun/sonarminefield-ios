@@ -44,7 +44,7 @@
         
         
         
-
+        gameBoard.listener = self;
     }
     
     
@@ -74,7 +74,8 @@
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 
     UITouch *touch = [touches anyObject];
-    CGPoint touchInRect = [ touch locationInView: drawImage ];
+    
+    CGPoint touchInRect = [ touch locationInView: playField ];
     int relativeX;
     int relativeY;
     
@@ -82,7 +83,7 @@
     relativeY = ( touchInRect.y + cameraPosition.y ) / [ tiles[ 0 ] size ].height;
     
     
-    if ( CGRectContainsPoint( [ drawImage frame ], touchInRect ) ) {
+    if ( CGRectContainsPoint( [ playField frame ], touchInRect ) ) {
         
         switch ( mode ) {
             case GAMEMODE_POKE:
@@ -98,18 +99,27 @@
         lastTouch.x = touchInRect.x;
         lastTouch.y = touchInRect.y;
         [ self draw ];
+
     }
+}
+
+- ( void ) defeat {
+    [ self performSelector: @selector( goOutcome ) withObject: self afterDelay: 2 ];
+}
+
+- ( void ) victory {
+    [ self performSelector: @selector( goOutcome ) withObject: self afterDelay: 2 ];
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     
     UITouch *touch = [touches anyObject];
     
-    if ([touch view] == drawImage )
+    if ([touch view] == playField )
     {
         
             
-        CGPoint touchLocation = [touch locationInView: drawImage ];
+        CGPoint touchLocation = [touch locationInView: playField ];
         int relativeX;
         int relativeY;
         
@@ -131,15 +141,15 @@
         
         lastTouch.x = touchLocation.x;
         lastTouch.y = touchLocation.y;
-        
         [ self draw ];
     }
     
 }
 
+
 - ( void ) draw {
     
-    UIGraphicsBeginImageContext( drawImage.frame.size);
+    UIGraphicsBeginImageContext( playField.frame.size);
     
     UIImage *img;
     CGRect rect = CGRectMake( 20, 20, 64, 64 );
@@ -169,7 +179,7 @@
     }
     
     
-    drawImage.image = UIGraphicsGetImageFromCurrentImageContext();
+    playField.image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
 }
 

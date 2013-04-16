@@ -66,14 +66,14 @@
 
     - ( void ) floodUncoverAtX:( int ) x andY: ( int ) y {
         
-        if ( covered[ x ][ y ] && !flagged[ x ][ y ] ) {
+        if ( covered[ y ][ x ] && !flagged[ y ][ x ] ) {
 			
-			if ( tileAt[ x ][ y ] == TILETYPE_BLANK ) {
+			if ( tileAt[ y ][ x ] == TILETYPE_BLANK ) {
 				
-				if ( covered[ x ][ y ] )
+				if ( covered[ y ][ x ] )
 					remainingTilesToClear--;
 				
-				covered[ x ][ y ] = NO;
+				covered[ y ][ x ] = NO;
 				
 				if ( x > 0)
                     [ self floodUncoverAtX: ( x - 1 ) andY: y ];
@@ -100,12 +100,12 @@
                     [ self floodUncoverAtX: ( x - 1 ) andY: ( y + 1 ) ];
 				
 				
-			} if ( tileAt[ x ][ y ] != TILETYPE_MINE ) {
+			} if ( tileAt[ y ][ x ] != TILETYPE_MINE ) {
 				
-				if ( covered[ x ][ y ] )
+				if ( covered[ y ][ x ] )
 					remainingTilesToClear--;
 				
-				covered[ x ][ y ] = NO;
+				covered[ y ][ x ] = NO;
 			}
 		}
     }
@@ -130,6 +130,7 @@
          srand (time(NULL));
         int minesToPlace = 33;
         minesPlaced = minesToPlace;
+        remainingTilesToClear = BOARD_SIZE * BOARD_SIZE;
         int c =0;
         int d =0;
         
