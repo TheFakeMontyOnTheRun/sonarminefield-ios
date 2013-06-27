@@ -103,6 +103,7 @@
     }
 }
 
+
 - ( void ) defeat {
     [ self performSelector: @selector( goOutcome ) withObject: self afterDelay: 2 ];
 }
