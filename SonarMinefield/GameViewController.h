@@ -22,7 +22,7 @@ enum InteractionMode { GAMEMODE_POKE, GAMEMODE_MOVEMAP, GAMEMODE_FLAG };
     int mode;
     IBOutlet UISegmentedControl *modeSelector;
 }
-
+- (void) draw;
 - (void) goOutcome;
 - (IBAction) gameModeChanged:(id)sender;
 - (IBAction)backToMenu:(id)sender;

@@ -148,6 +148,8 @@
 }
 
 
+
+
 - ( void ) draw {
     
     UIGraphicsBeginImageContext( playField.frame.size);
@@ -155,10 +157,12 @@
     UIImage *img;
     CGRect rect = CGRectMake( 20, 20, 64, 64 );
     
+    int startX = cameraPosition.x / rect.size.width;
+    int startY = cameraPosition.y / rect.size.height;
     
-    for ( int y = 0; y < BOARD_SIZE; ++y ) {
+    for ( int y = startY; y < BOARD_SIZE; ++y ) {
         
-        for ( int x = 0; x < BOARD_SIZE; ++x ) {
+        for ( int x = startX; x < BOARD_SIZE; ++x ) {
             
             if ( [ gameBoard isCoveredAtX: x andY: y ] ) {
 
