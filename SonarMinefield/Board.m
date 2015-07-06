@@ -14,10 +14,19 @@
 @synthesize listener;
 
     - ( int ) tileAtX: (int) x andY: (int) y {
-        return tileAt[ y ][ x ];
+        
+        if ( x >= BOARD_SIZE || y >= BOARD_SIZE || x < 0 || y < 0 ) {
+            return TILETYPE_BLANK;
+        } else {
+            return tileAt[ y ][ x ];
+        }
     }
 
     - (void) pokeAtX: (int) x andY: (int) y {
+        
+        if ( x >= BOARD_SIZE || y >= BOARD_SIZE || x < 0 || y < 0 ) {
+            return;
+        }
         
         if ( tileAt[ y ][ x ] == TILETYPE_MINE ) {
             
@@ -111,16 +120,31 @@
     }
 
     - (void) flagAtX:(int)x andY:(int)y  {
+        
+        if ( x >= BOARD_SIZE || y >= BOARD_SIZE || x < 0 || y < 0 ) {
+            return;
+        }
+        
         flagged[ y ][ x ] = !flagged[ y ][ x ];
         
     }
 
 
     - ( BOOL )isCoveredAtX: (int) x andY: (int) y {
+        
+        if ( x >= BOARD_SIZE || y >= BOARD_SIZE || x < 0 || y < 0 ) {
+            return NO;
+        }
+        
         return covered[ y ][ x ];
     }
 
     - ( BOOL )isFlaggedAtX: (int) x andY: (int) y {
+        
+        if ( x >= BOARD_SIZE || y >= BOARD_SIZE || x < 0 || y < 0 ) {
+            return NO;
+        }
+        
         return flagged[ y ][ x ];
     }
 
